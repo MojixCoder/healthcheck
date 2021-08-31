@@ -8,7 +8,7 @@ import (
 // InsertOneResult is the structure of inserting an object to MongoDB
 type InsertOneResult struct {
 	InsertedID *mongo.InsertOneResult
-	Error error
+	Error      error
 }
 
 // InsertOne inserts an object to MongoDB

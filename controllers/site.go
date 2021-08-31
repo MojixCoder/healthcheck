@@ -47,16 +47,16 @@ func SiteHealthCheck(c *gin.Context) {
 	// siteReport is the report of the head request to URL
 	DTNow, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	var siteReport = models.Site{
-		ID: primitive.NewObjectID(),
-		URL: siteForm.URL,
-		Status: res.Status,
+		ID:         primitive.NewObjectID(),
+		URL:        siteForm.URL,
+		Status:     res.Status,
 		StatusCode: res.StatusCode,
-		CreatedAt: DTNow,
+		CreatedAt:  DTNow,
 	}
 
 	// Insert site report to site collection
 	go models.InsertOne(siteCollection, siteReport, ch)
-	result := <- ch
+	result := <-ch
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"detail": "unable to insert object",
