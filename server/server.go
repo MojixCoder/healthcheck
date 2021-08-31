@@ -7,6 +7,6 @@ import (
 // Init runs server
 func Init() {
 	appConfig := config.GetAppConfig()
-	r := newRouter()
+	r := NewRouter()
 	r.Run(appConfig.PORT)
 }

@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// newRouter is the application router
-func newRouter() *gin.Engine {
+// NewRouter is the application router
+func NewRouter() *gin.Engine {
 	router := gin.Default()
 
 	v1 := router.Group("v1")
