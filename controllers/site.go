@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"github.com/MojixCoder/healthcheck/db"
 	"github.com/MojixCoder/healthcheck/helpers"
 	"github.com/MojixCoder/healthcheck/models"
@@ -12,6 +11,7 @@ import (
 	"time"
 )
 
+// SiteHealthCheck is website health checker
 func SiteHealthCheck(c *gin.Context) {
 	var siteForm models.SiteForm
 
@@ -30,6 +30,7 @@ func SiteHealthCheck(c *gin.Context) {
 		return
 	}
 
+	// Performs a head request to URL
 	res, err := helpers.HeadRequest(siteForm.URL)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -38,6 +39,12 @@ func SiteHealthCheck(c *gin.Context) {
 		return
 	}
 
+	// Channel
+	ch := make(chan models.InsertOneResult)
+	// Site collection
+	siteCollection := db.GetCollection(db.GetDBClient(), "site")
+
+	// siteReport is the report of the head request to URL
 	DTNow, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	var siteReport = models.Site{
 		ID: primitive.NewObjectID(),
@@ -47,9 +54,10 @@ func SiteHealthCheck(c *gin.Context) {
 		CreatedAt: DTNow,
 	}
 
-	siteCollection := db.GetCollection(db.GetDBClient(), "site")
-	_, err = siteCollection.InsertOne(context.TODO(), siteReport)
-	if err != nil {
+	// Insert site report to site collection
+	go models.InsertOne(siteCollection, siteReport, ch)
+	result := <- ch
+	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"detail": "unable to insert object",
 		})
