@@ -13,6 +13,7 @@ func NewRouter() *gin.Engine {
 	{
 		v1.POST("/website", controllers.SiteHealthCheck)
 		v1.POST("/mysql", controllers.MySQLHealthCheck)
+		v1.POST("/mongo", controllers.MongoHealthCheck)
 	}
 	return router
 }
