@@ -12,6 +12,7 @@ func NewRouter() *gin.Engine {
 	v1 := router.Group("v1")
 	{
 		v1.POST("/website", controllers.SiteHealthCheck)
+		v1.POST("/mysql", controllers.MySQLHealthCheck)
 	}
 	return router
 }

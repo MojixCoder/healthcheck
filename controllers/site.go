@@ -1,14 +1,15 @@
 package controllers
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/MojixCoder/healthcheck/db"
 	"github.com/MojixCoder/healthcheck/helpers"
 	"github.com/MojixCoder/healthcheck/models"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"time"
 )
 
 // SiteHealthCheck is website health checker
@@ -30,14 +31,18 @@ func SiteHealthCheck(c *gin.Context) {
 		return
 	}
 
+	httpReqChannel := make(chan helpers.HttpRequestResult)
+
 	// Performs a head request to URL
-	res, err := helpers.HeadRequest(siteForm.URL)
-	if err != nil {
+	go helpers.HeadRequest(siteForm.URL, httpReqChannel)
+	reqResult := <-httpReqChannel
+	if reqResult.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"detail": err.Error(),
+			"detail": reqResult.Error.Error(),
 		})
 		return
 	}
+	defer reqResult.Response.Body.Close()
 
 	// Channel
 	ch := make(chan models.InsertOneResult)
@@ -49,8 +54,8 @@ func SiteHealthCheck(c *gin.Context) {
 	var siteReport = models.Site{
 		ID:         primitive.NewObjectID(),
 		URL:        siteForm.URL,
-		Status:     res.Status,
-		StatusCode: res.StatusCode,
+		Status:     reqResult.Response.Status,
+		StatusCode: reqResult.Response.StatusCode,
 		CreatedAt:  DTNow,
 	}
 

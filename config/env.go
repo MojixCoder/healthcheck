@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/joho/godotenv"
 )
 
 // getEnvDir returns the .env file path

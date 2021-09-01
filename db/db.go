@@ -2,11 +2,12 @@ package db
 
 import (
 	"context"
+	"log"
+	"time"
+
 	"github.com/MojixCoder/healthcheck/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"time"
 )
 
 // client is DB Client

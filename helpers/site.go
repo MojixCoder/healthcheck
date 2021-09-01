@@ -4,11 +4,15 @@ import (
 	"net/http"
 )
 
-func HeadRequest(URL string) (*http.Response, error) {
+type HttpRequestResult struct {
+	Response *http.Response
+	Error    error
+}
+
+func HeadRequest(URL string, ch chan HttpRequestResult) {
 	res, err := http.Head(URL)
-	if err != nil {
-		return nil, err
+	ch <- HttpRequestResult{
+		Response: res,
+		Error:    err,
 	}
-	res.Body.Close()
-	return res, nil
 }
