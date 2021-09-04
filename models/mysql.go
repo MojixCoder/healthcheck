@@ -18,7 +18,7 @@ type MySQL struct {
 // MySQLForm validates JSON body for checking MySQL
 type MySQLForm struct {
 	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"omitempty"`
+	Password string `json:"password"`
 	Host     string `json:"host" validate:"required,hostname|hostname_rfc1123"`
 	Port     string `json:"port" validate:"required,numeric"`
 	DBName   string `json:"DBName" validate:"required"`
